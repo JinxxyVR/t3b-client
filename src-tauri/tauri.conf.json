@@ -11,7 +11,7 @@
             "msi"
         ],
         "windows": {
-            "signCommand": "trusted-signing-cli -e $AZURE_ENDPOINT -a $AZURE_CODE_SIGNING_NAME -c $AZURE_CERT_PROFILE_NAME -d Jinxxy Direct Client %1",
+            "signCommand": "trusted-signing-cli -e https://eus.codesigning.azure.net/ -a jinxxy -c jinxxy-direct -d Jinxxy Direct Client %1",
             "wix": {
                 "bannerPath": "wix/banner.bmp",
                 "dialogImagePath": "wix/dialog.bmp"

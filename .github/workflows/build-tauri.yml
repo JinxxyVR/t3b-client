@@ -16,14 +16,9 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Install dependencies
-        run: bun install
-
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
-      - name: Install trusted-signing
-        run: cargo install trusted-signing-cli
-        
+
       # cache deps
       - name: Cache Rust dependencies
         uses: actions/cache@v4
@@ -43,6 +38,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-bun-
 
+      # install deps
+      - name: Install dependencies
+        run: bun install
+      - name: Install trusted-signing
+        run: cargo install trusted-signing-cli --locked
+        
       # read files for version and app name
       - name: Get version from package.json
         id: package-version
@@ -73,9 +74,6 @@ jobs:
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          AZURE_ENDPOINT: ${{ vars.AZURE_ENDPOINT }}
-          AZURE_CODE_SIGNING_NAME: ${{ vars.AZURE_CODE_SIGNING_NAME }} 
-          AZURE_CERT_PROFILE_NAME: ${{ vars.AZURE_CERT_PROFILE_NAME }}
         with:
           tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
           releaseName: 'App v__VERSION__'
