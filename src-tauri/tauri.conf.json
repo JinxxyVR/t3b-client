@@ -11,6 +11,9 @@
             "msi"
         ],
         "windows": {
+            "certificateThumbprint": "dfaf8f052938b74873a6f6015c8a43139e988a32",
+            "digestAlgorithm": "sha256",
+            "timestampUrl": "http://timestamp.comodoca.com",
             "wix": {
                 "bannerPath": "wix/banner.bmp",
                 "dialogImagePath": "wix/dialog.bmp"
@@ -29,18 +32,18 @@
             "ext": ["3b"]
         }]
     },
-    "productName": "Third Uploader",
-    "mainBinaryName": "Third Uploader",
-    "identifier": "com.third3d.uploader",
+    "productName": "Jinxxy Direct Client",
+    "mainBinaryName": "Jinxxy Direct Client",
+    "identifier": "com.jinxxy.t3b-client",
     "plugins": {
         "updater": {
             "windows": {
                 "installMode": "passive"
             },
             "endpoints": [
-                "https://github.com/third3d/uploader/releases/latest/download/latest.json"
+                "https://github.com/JinxxyVR/t3b-client/releases/latest/download/latest.json"
             ],
-            "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEM1QTRDMjA2QTVEMDJFQTAKUldTZ0x0Q2xCc0treFZVeXpxSHR2Q1NpODI5MDhDdUl6dENxRGtxUmR4cGYrajFrVWkzVmVvdFAK"
+            "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU0OEFCMTI5Nzk3NTNGMzkKUldRNVAzVjVLYkdLVkRNUWJrZ1d1MGJ5Rnh1ZnYyQzlIZ2pCVkd4L3REdU1jNTlJRDlxZnpIZEQK"
         }
     },
     "app": {
@@ -55,7 +58,7 @@
         },
         "windows": [
             {
-                "title": "Third Uploader",
+                "title": "Jinxxy Direct Client",
                 "width": 800,
                 "height": 600,
                 "minWidth": 800,
@@ -65,7 +68,7 @@
                 "dragDropEnabled": true,
                 "visible": true,
                 "useHttpsScheme": true,
-                "userAgent": "Third Uploader/1.0.0 contact@third3d.com",
+                "userAgent": "Jinxxy Direct Client/1.0.0 hello@jinxxy.com",
                 "backgroundColor": "#101011",
                 "theme": "Dark"
             }

@@ -76,7 +76,7 @@ export function FileInput(props: { extension: string, onChange: (path: string) =
                 <>
                     <File className='text-zinc-500' />
                     <p className=''>Drag and drop a <strong>.{props.extension}</strong> file or</p>
-                    <Button type="button" variant='secondary' onClick={handleClick} className="bg-gradient-to-br from-zinc-700 to-zinc-900 hover:from-zinc-600">Select Third Avatar Bundle</Button>
+                    <Button type="button" variant='secondary' onClick={handleClick} className="bg-gradient-to-br from-zinc-700 to-zinc-900 hover:from-zinc-600">Select Avatar Bundle</Button>
                 </>
             }
         </div>

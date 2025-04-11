@@ -4329,6 +4329,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "t3b-client"
+version = "1.0.1"
+dependencies = [
+ "base64 0.22.1",
+ "futures-util",
+ "keyring",
+ "liblzma",
+ "librsync",
+ "lz4_flex",
+ "md-5",
+ "rand 0.8.5",
+ "read-progress-stream",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-dialog",
+ "tauri-plugin-fs",
+ "tauri-plugin-http",
+ "tauri-plugin-shell",
+ "tauri-plugin-updater",
+ "thiserror 1.0.64",
+ "tokio",
+ "tokio-util",
+ "zip",
+ "zstd",
+]
+
+[[package]]
 name = "tao"
 version = "0.32.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5149,36 +5179,6 @@ name = "untrusted"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
-
-[[package]]
-name = "uploader"
-version = "1.0.1"
-dependencies = [
- "base64 0.22.1",
- "futures-util",
- "keyring",
- "liblzma",
- "librsync",
- "lz4_flex",
- "md-5",
- "rand 0.8.5",
- "read-progress-stream",
- "reqwest",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-dialog",
- "tauri-plugin-fs",
- "tauri-plugin-http",
- "tauri-plugin-shell",
- "tauri-plugin-updater",
- "thiserror 1.0.64",
- "tokio",
- "tokio-util",
- "zip",
- "zstd",
-]
 
 [[package]]
 name = "url"

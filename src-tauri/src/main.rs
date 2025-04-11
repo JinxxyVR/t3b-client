@@ -39,14 +39,14 @@ struct Token {
 
 #[tauri::command]
 fn save_token(username: String, token: Token) -> Result<(), String> {
-    let entry = Entry::new("third_vrchat_token", &username).map_err(|e| e.to_string())?;
+    let entry = Entry::new("jinxxy_vrchat_token", &username).map_err(|e| e.to_string())?;
     let json = serde_json::to_string(&token).map_err(|e| e.to_string())?;
     entry.set_password(&json).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 fn load_token(username: String) -> Result<Option<Token>, String> {
-    let entry = Entry::new("third_vrchat_token", &username).map_err(|e| e.to_string())?;
+    let entry = Entry::new("jinxxy_vrchat_token", &username).map_err(|e| e.to_string())?;
     let res = entry.get_password();
     match res {
         Ok(json) => serde_json::from_str::<Token>(&json)
@@ -59,7 +59,7 @@ fn load_token(username: String) -> Result<Option<Token>, String> {
 
 #[tauri::command]
 fn delete_token(username: String) -> Result<(), String> {
-    let entry = Entry::new("third_vrchat_token", &username).map_err(|e| e.to_string())?;
+    let entry = Entry::new("jinxxy_vrchat_token", &username).map_err(|e| e.to_string())?;
     entry.delete_credential().map_err(|e| e.to_string())
 }
 
@@ -133,7 +133,7 @@ async fn transcode_bundle(path: String, output: String) -> Result<(), String> {
     Ok(())
 }
 
-const USER_AGENT: &str = "Third Uploader/1.0.0 contact@third3d.com";
+const USER_AGENT: &str = "Jinxxy Direct Client/1.0.0 hello@jinxxy.com";
 
 #[tauri::command]
 async fn upload_file(

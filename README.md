@@ -1,12 +1,13 @@
-# Third Uploader
+# Jinxxy Direct Client
+### Powerd by [Third](https://third3d.com)
 
 Upload pre-built avatars directly to VRChat.
 
-Use it with [https://third3d.com/](https://third3d.com/) or build your own Third Avatar Bundle's (.3b) with [Third Unity SDK](https://github.com/third3d/unity-sdk)
+Use it with Jinxxy Direct (link needed) or build your own Avatar Bundle's (.3b) with [Third Unity SDK](https://github.com/third3d/unity-sdk)
 
 ![](assets/screen.png)
 
 ## How to
-1. Drag and drop a **Third Avatar Bundle** (.3b file) into the app
-2. Press on **Upload**
-3. Login to VRChat and wait for upload to finish
+1. Login to VRChat and wait for upload to finish
+2. Open (double click) or drag and drop into the client an **Avatar Bundle** (.3b file)
+3. Press on **Upload**

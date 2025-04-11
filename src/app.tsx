@@ -246,8 +246,11 @@ function useUpdater() {
     const [updating, setUpdating] = useState(false);
     useEffect(() => {
         const call = async () => {
+            if (!import.meta.env.PROD) {
+                return;
+            }
             const update = await check();
-            if (update?.available) {
+            if (update) {
                 setUpdating(true);
                 await update.downloadAndInstall();
             }
@@ -338,9 +341,9 @@ function App() {
                 <div className='h-screen flex flex-col'>
                     <header className='flex w-full h-[72px] justify-between items-start'>
                         <div data-tauri-drag-region className='flex justify-between grow'>
-                            <div onClick={() => open("https://third3d.com")} className='flex p-2 items-end transition hover:cursor-pointer hover:drop-shadow-[0_6px_3px_rgba(255,255,255,0.25)]'>
-                                <img src={thirdLogo} className="h-12 ml-4" alt="Third Logo" />
-                                <span className='font-bold ml-2 mb-1 text-xl'>Uploader</span>
+                            <div onClick={() => open("https://jinxxy.com")} className='flex p-2 items-end transition hover:cursor-pointer hover:drop-shadow-[0_6px_3px_rgba(255,255,255,0.25)]'>
+                                <img src={thirdLogo} className="h-12 ml-4" alt="Jinxxy Direct Logo" />
+                                <span className='font-bold ml-2 mb-1 text-xl'>Client</span>
                             </div>
                             <User />
                         </div>

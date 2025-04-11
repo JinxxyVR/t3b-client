@@ -183,7 +183,7 @@ async function unpack(bundlePath: string): Promise<Bundle> {
     const res = MetadataSchema.safeParse(JSON.parse(metadataText));
     if (!res.success) throw new Error("Metadata invalid");
     const metadata = res.data;
-    if (metadata.schemaVersion !== undefined) throw new Error("Restart Third Uploader and update the app.");
+    if (metadata.schemaVersion !== undefined) throw new Error("Restart Jinxxy Direct Client and update the app.");
 
     const assetBundlePaths: Partial<Record<Platform, AssetBundlePath>> = {};
     for (const platform of ["windows", "android", "ios"]) {

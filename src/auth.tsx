@@ -314,10 +314,10 @@ export function AuthProvider(props: { children: ReactNode; }) {
           )}
           <DialogFooter className='text-sm text-zinc-400'>
             <div>
-              <p>Third Uploader communicates directly with the VRChat servers.</p>
-              <p>Third Uploader is open source and can be found here: <ExternalLink href={"https://github.com/third3d/uploader"}>github.com/third3d/uploader</ExternalLink></p>
+              <p>Jinxxy Direct Client communicates directly with the VRChat servers.</p>
+              <p>Jinxxy Direct Client is open source and can be found here: <ExternalLink href={"https://github.com/JinxxyVR/t3b-client"}>github.com/JinxxyVR/t3b-client</ExternalLink></p>
               <br />
-              <p className='text-xs'>Third Uploader is not affiliated with, endorsed, sponsored, or specifically approved by VRChat Inc.</p>
+              <p className='text-xs'>Jinxxy Direct is not affiliated with, endorsed, sponsored, or specifically approved by VRChat Inc.</p>
             </div>
           </DialogFooter>
         </DialogContent>
