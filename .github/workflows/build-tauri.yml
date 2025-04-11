@@ -67,7 +67,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_PRIVATE_KEY_PASSWORD }}
 
       - name: Sign Windows Artifacts (Azure Code Signing - Client Secret)
         uses: azure/trusted-signing-action@v0
@@ -97,7 +97,6 @@ jobs:
             src-tauri/target/release/bundle/msi/${{ steps.get-app-name.outputs.APP_NAME }}_*.msi
             src-tauri/target/release/bundle/msi/${{ steps.get-app-name.outputs.APP_NAME }}_*.msi.zip
             src-tauri/target/release/${{ steps.get-app-name.outputs.APP_NAME }}.exe
-            src-tauri/target/release/*.json
             src-tauri/target/release/*.sig
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needs token to create release
