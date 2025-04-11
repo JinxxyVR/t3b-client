@@ -56,7 +56,7 @@ jobs:
             if ([string]::IsNullOrWhiteSpace($appName)) { Write-Error "Could not find productName or mainBinaryName"; exit 1 }
             echo "APP_NAME=$appName" >> $env:GITHUB_OUTPUT
             Write-Host "App Name set to: $appName"
-          } catch { Write-Error "Failed to parse/extract from $configFile: $_"; exit 1 }
+          } catch { Write-Error "Failed to parse/extract from ${configFile}: $_"; exit 1 }
 
       - name: Install dependencies
         run: bun install
