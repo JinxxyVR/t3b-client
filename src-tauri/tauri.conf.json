@@ -11,9 +11,7 @@
             "msi"
         ],
         "windows": {
-            "certificateThumbprint": "dfaf8f052938b74873a6f6015c8a43139e988a32",
-            "digestAlgorithm": "sha256",
-            "timestampUrl": "http://timestamp.comodoca.com",
+            "signCommand": "trusted-signing-cli -e $AZURE_ENDPOINT -a $AZURE_CODE_SIGNING_NAME -c $AZURE_CERT_PROFILE_NAME -d Jinxxy Direct Client %1",
             "wix": {
                 "bannerPath": "wix/banner.bmp",
                 "dialogImagePath": "wix/dialog.bmp"

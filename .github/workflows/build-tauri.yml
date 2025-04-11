@@ -11,14 +11,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # install things
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+      - name: Install dependencies
+        run: bun install
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
+      - name: Install trusted-signing
+        run: cargo install trusted-signing-cli
         
+      # cache deps
       - name: Cache Rust dependencies
         uses: actions/cache@v4
         with:
@@ -29,7 +35,6 @@ jobs:
           key: ${{ runner.os }}-rust-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-rust-
-
       - name: Cache Bun dependencies
         uses: actions/cache@v4
         with:
@@ -37,6 +42,8 @@ jobs:
           key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
           restore-keys: |
             ${{ runner.os }}-bun-
+
+      # read files for version and app name
       - name: Get version from package.json
         id: package-version
         run: |
@@ -58,45 +65,58 @@ jobs:
             Write-Host "App Name set to: $appName"
           } catch { Write-Error "Failed to parse/extract from ${configFile}: $_"; exit 1 }
 
-      - name: Install dependencies
-        run: bun install
 
-          
-      - name: Build Tauri App (incl. Updater Signing)
-        run: bun run tauri build # Assuming 'tauri build' is in your package.json scripts or accessible globally
+
+      - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_PRIVATE_KEY_PASSWORD }}
-
-      - name: Sign Windows Artifacts (Azure Code Signing - Client Secret)
-        uses: azure/trusted-signing-action@v0
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_ENDPOINT: ${{ vars.AZURE_ENDPOINT }}
+          AZURE_CODE_SIGNING_NAME: ${{ vars.AZURE_CODE_SIGNING_NAME }} 
+          AZURE_CERT_PROFILE_NAME: ${{ vars.AZURE_CERT_PROFILE_NAME }}
         with:
-          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          endpoint: ${{ secrets.AZURE_ENDPOINT }}
-          trusted-signing-account-name: ${{ secrets.AZURE_CODE_SIGNING_NAME }}
-          certificate-profile-name: ${{ secrets.AZURE_CERT_PROFILE_NAME }}
-
-          # Files to Sign
-          files-folder: ${{ github.workspace }}/src-tauri/target/release
-          files-folder-filter: exe,msi
-          # verbosity: detailed # Uncomment for detailed signing logs
-
-      - name: Create GitHub Release and Upload Artifacts
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.package-version.outputs.VERSION }} # Use version from package.json
-          name: 'Release v${{ steps.package-version.outputs.VERSION }}'
-          body: |
-            Windows release v${{ steps.package-version.outputs.VERSION }}
-          draft: false
+          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
+          releaseName: 'App v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: true
           prerelease: false
-          files: | # Upload signed artifacts + updater files
-            src-tauri/target/release/bundle/msi/${{ steps.get-app-name.outputs.APP_NAME }}_*.msi
-            src-tauri/target/release/bundle/msi/${{ steps.get-app-name.outputs.APP_NAME }}_*.msi.zip
-            src-tauri/target/release/${{ steps.get-app-name.outputs.APP_NAME }}.exe
-            src-tauri/target/release/*.sig
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needs token to create release
+      # - name: Build Tauri App (incl. Updater Signing)
+      #   run: bun run tauri build # Assuming 'tauri build' is in your package.json scripts or accessible globally
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+      #     TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_PRIVATE_KEY_PASSWORD }}
+
+      # - name: Sign Windows Artifacts (Azure Code Signing - Client Secret)
+      #   uses: azure/trusted-signing-action@v0
+      #   with:
+      #     azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #     azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #     azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+      #     endpoint: ${{ secrets.AZURE_ENDPOINT }}
+      #     trusted-signing-account-name: ${{ secrets.AZURE_CODE_SIGNING_NAME }}
+      #     certificate-profile-name: ${{ secrets.AZURE_CERT_PROFILE_NAME }}
+
+      #     # Files to Sign
+      #     files-folder: ${{ github.workspace }}/src-tauri/target/release
+      #     files-folder-filter: exe,msi
+      #     # verbosity: detailed # Uncomment for detailed signing logs
+
+      # - name: Create GitHub Release and Upload Artifacts
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     tag_name: v${{ steps.package-version.outputs.VERSION }} # Use version from package.json
+      #     name: 'Release v${{ steps.package-version.outputs.VERSION }}'
+      #     body: |
+      #       Windows release v${{ steps.package-version.outputs.VERSION }}
+      #     draft: false
+      #     prerelease: false
+      #     files: | # Upload signed artifacts + updater files
+      #       src-tauri/target/release/bundle/msi/${{ steps.get-app-name.outputs.APP_NAME }}_*.msi
+      #       src-tauri/target/release/bundle/msi/${{ steps.get-app-name.outputs.APP_NAME }}_*.msi.zip
+      #       src-tauri/target/release/${{ steps.get-app-name.outputs.APP_NAME }}.exe
+      #       src-tauri/target/release/*.sig
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needs token to create release
