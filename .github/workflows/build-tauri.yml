@@ -45,11 +45,18 @@ jobs:
       - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2.4
         with:
           sdk-version: 22621
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x
+          cache: true
+            
       - name: Install trusted-signing
         run: |
           cargo install trusted-signing-cli --locked
           trusted-signing-cli --version
-          
+
         
       - name: Install azure-cli
         shell: pwsh
@@ -82,6 +89,7 @@ jobs:
             Write-Host "App Name set to: $appName"
           } catch { Write-Error "Failed to parse/extract from ${configFile}: $_"; exit 1 }
 
+      
       - name: run tauri bundle
         shell: pwsh
         env:
