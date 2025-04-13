@@ -52,10 +52,10 @@ jobs:
       #     dotnet-version: 8.x
       #     # cache: true
             
-      - name: Install trusted-signing
-        run: |
-          cargo install trusted-signing-cli --locked
-          trusted-signing-cli --version
+      # - name: Install trusted-signing
+      #   run: |
+      #     cargo install trusted-signing-cli --locked
+      #     trusted-signing-cli --version
 
         
       # - name: Install azure-cli
@@ -67,15 +67,15 @@ jobs:
       #     Remove-Item .\AzureCLI.msi;
       #     az version
 
-      - name: Test trusted-signing-cli
-        shell: pwsh
-        env:
-          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        run: |
-          az version
-          trusted-signing-cli --endpoint https://eus.codesigning.azure.net/ --account jinxxy --list-certificates
+      # - name: Test trusted-signing-cli
+      #   shell: pwsh
+      #   env:
+      #     AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      #     AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      #     AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      #   run: |
+      #     az version
+      #     trusted-signing-cli --endpoint https://eus.codesigning.azure.net/ --account jinxxy --list-certificates
 
       # read files for version and app name
       - name: Get version from package.json
