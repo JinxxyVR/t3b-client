@@ -5,9 +5,8 @@
 
 use std::{
     fs::File,
-    io::{BufReader, SeekFrom, Write},
+    io::{BufReader, SeekFrom},
     path::PathBuf,
-    str::FromStr,
 };
 
 use base64::{engine::general_purpose::STANDARD, Engine as _};
@@ -18,12 +17,9 @@ use md5::{Digest, Md5};
 use rand::Rng;
 use reqwest::{header::*, Body};
 use serde::{Deserialize, Serialize};
-use tauri::{path, AppHandle, Manager, Url};
+use tauri::Manager;
 use tokio::io::{AsyncReadExt, AsyncSeekExt};
-use tokio_util::{
-    codec::{BytesCodec, FramedRead},
-    io::ReaderStream,
-};
+use tokio_util::io::ReaderStream;
 use zip::ZipArchive;
 
 //   mod file_watcher;

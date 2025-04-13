@@ -30,8 +30,8 @@
             "ext": ["3b"]
         }]
     },
-    "productName": "Jinxxy Direct Client",
-    "mainBinaryName": "Jinxxy Direct Client",
+    "productName": "Jinxxy Direct",
+    "mainBinaryName": "Jinxxy Direct",
     "identifier": "com.jinxxy.t3b-client",
     "plugins": {
         "updater": {
@@ -56,7 +56,7 @@
         },
         "windows": [
             {
-                "title": "Jinxxy Direct Client",
+                "title": "Jinxxy Direct",
                 "width": 800,
                 "height": 600,
                 "minWidth": 800,
