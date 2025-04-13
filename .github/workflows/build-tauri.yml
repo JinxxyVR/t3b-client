@@ -108,7 +108,6 @@ jobs:
           AZURE_ENDPOINT: ${{ vars.AZURE_ENDPOINT }}
           AZURE_CERT_PROFILE_NAME: ${{ vars.AZURE_CERT_PROFILE_NAME }}
           AZURE_CODE_SIGNING_NAME: ${{ vars.AZURE_CODE_SIGNING_NAME }}
-          TAURI_CONF_JSON: "./app/src-tauri/tauri.conf.json"
         run: |
           $tempFolderPath = Join-Path $env:Temp "mtsc"
           $mtscName = Join-Path $tempFolderPath "mtsc.nuget.zip"
