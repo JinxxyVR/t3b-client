@@ -42,7 +42,9 @@ jobs:
       - name: Install dependencies
         run: bun install
       - name: Install trusted-signing
-        run: cargo install trusted-signing-cli --locked
+        run: |
+          cargo install trusted-signing-cli --locked
+          trusted-signing-cli --version
         
       - name: Install azure-cli
         shell: pwsh
