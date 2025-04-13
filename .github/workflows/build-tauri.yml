@@ -42,15 +42,15 @@ jobs:
       - name: Install dependencies
         run: bun install
         
-      - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2.4
-        with:
-          sdk-version: 22621
+      # - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2.4
+      #   with:
+      #     sdk-version: 22621
 
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.x
-          # cache: true
+      # - name: Setup dotnet
+      #   uses: actions/setup-dotnet@v4
+      #   with:
+      #     dotnet-version: 8.x
+      #     # cache: true
             
       - name: Install trusted-signing
         run: |
@@ -58,14 +58,24 @@ jobs:
           trusted-signing-cli --version
 
         
-      - name: Install azure-cli
+      # - name: Install azure-cli
+      #   shell: pwsh
+      #   run: |
+      #     $ProgressPreference = 'SilentlyContinue';
+      #     Invoke-WebRequest -Uri https://aka.ms/installazurecliwindowsx64 -OutFile .\AzureCLI.msi;
+      #     Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet';
+      #     Remove-Item .\AzureCLI.msi;
+      #     az version
+
+      - name: Test trusted-signing-cli
         shell: pwsh
+        env:
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: |
-          $ProgressPreference = 'SilentlyContinue';
-          Invoke-WebRequest -Uri https://aka.ms/installazurecliwindowsx64 -OutFile .\AzureCLI.msi;
-          Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet';
-          Remove-Item .\AzureCLI.msi;
           az version
+          trusted-signing-cli --endpoint https://eus.codesigning.azure.net/ --account jinxxy --list-certificates
 
       # read files for version and app name
       - name: Get version from package.json
