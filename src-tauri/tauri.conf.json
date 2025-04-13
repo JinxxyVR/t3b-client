@@ -11,7 +11,7 @@
             "msi"
         ],
         "windows": {
-            "signCommand": "trusted-signing-cli --endpoint https://eus.codesigning.azure.net/ --account jinxxy --certificate jinxxy-direct %1",
+            "signCommand": "trusted-signing-cli --endpoint https://eus.codesigning.azure.net/ --account jinxxy --certificate jinxxy-direct -d JinxxyDirect %1",
             "wix": {
                 "bannerPath": "wix/banner.bmp",
                 "dialogImagePath": "wix/dialog.bmp"
