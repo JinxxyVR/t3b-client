@@ -53,39 +53,39 @@ jobs:
           Remove-Item .\AzureCLI.msi;
           az version
 
-      # read files for version and app name
-      - name: Get version from package.json
-        id: package-version
-        run: |
-          $version = (Get-Content .\package.json | ConvertFrom-Json).version
-          echo "VERSION=$version" >> $env:GITHUB_OUTPUT
-        shell: pwsh
-      - name: Get App Name from tauri.conf.json
-        id: get-app-name
-        shell: pwsh
-        run: |
-          $configFile = "src-tauri/tauri.conf.json"
-          if (-not (Test-Path $configFile)) { Write-Error "tauri.conf.json not found"; exit 1 }
-          try {
-            $config = Get-Content $configFile | ConvertFrom-Json -ErrorAction Stop
-            $appName = $config.productName
-            if ([string]::IsNullOrWhiteSpace($appName)) { $appName = $config.mainBinaryName }
-            if ([string]::IsNullOrWhiteSpace($appName)) { Write-Error "Could not find productName or mainBinaryName"; exit 1 }
-            echo "APP_NAME=$appName" >> $env:GITHUB_OUTPUT
-            Write-Host "App Name set to: $appName"
-          } catch { Write-Error "Failed to parse/extract from ${configFile}: $_"; exit 1 }
+      # # read files for version and app name
+      # - name: Get version from package.json
+      #   id: package-version
+      #   run: |
+      #     $version = (Get-Content .\package.json | ConvertFrom-Json).version
+      #     echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+      #   shell: pwsh
+      # - name: Get App Name from tauri.conf.json
+      #   id: get-app-name
+      #   shell: pwsh
+      #   run: |
+      #     $configFile = "src-tauri/tauri.conf.json"
+      #     if (-not (Test-Path $configFile)) { Write-Error "tauri.conf.json not found"; exit 1 }
+      #     try {
+      #       $config = Get-Content $configFile | ConvertFrom-Json -ErrorAction Stop
+      #       $appName = $config.productName
+      #       if ([string]::IsNullOrWhiteSpace($appName)) { $appName = $config.mainBinaryName }
+      #       if ([string]::IsNullOrWhiteSpace($appName)) { Write-Error "Could not find productName or mainBinaryName"; exit 1 }
+      #       echo "APP_NAME=$appName" >> $env:GITHUB_OUTPUT
+      #       Write-Host "App Name set to: $appName"
+      #     } catch { Write-Error "Failed to parse/extract from ${configFile}: $_"; exit 1 }
 
-      - name: run tauri bundle
-        shell: pwsh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_PRIVATE_KEY_PASSWORD }}
-        run: |
-          bun run tauri bundle
+      # - name: run tauri bundle
+      #   shell: pwsh
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      #     AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      #     AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      #     TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+      #     TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_PRIVATE_KEY_PASSWORD }}
+      #   run: |
+      #     bun run tauri bundle
       # - uses: tauri-apps/tauri-action@v0
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
