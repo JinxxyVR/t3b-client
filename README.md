@@ -1,5 +1,5 @@
 # Jinxxy Direct Client
-### Powered by [Third](https://third3d.com)
+### Powered by [Third](https://third3d.com) original code [here](https://github.com/third3d/uploader)
 
 Upload pre-built avatars directly to VRChat.
 
