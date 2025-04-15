@@ -30,7 +30,7 @@ export const parseFileUrl = (url: string) => {
     }
 };
 
-export class VRChatError extends Error {
+export class ApiError extends Error {
     data: any;
 
     constructor(data: any) {
@@ -193,7 +193,7 @@ export async function getUser(
         return { type: "invalid" };
     }
 
-    if (!resp.ok) throw new VRChatError(data);
+    if (!resp.ok) throw new ApiError(data);
 
     let authToken = undefined;
     // Tauri v2 returns headers as a Headers object
@@ -229,7 +229,7 @@ export const verifyTwoFactor = async (args: { authToken: string, type: "emailotp
 
     if (!resp.ok) {
         const data = await resp.json();
-        throw new VRChatError(data);
+        throw new ApiError(data);
     }
 
     const setCookieHeaders = resp.headers.getSetCookie();
@@ -252,7 +252,7 @@ export const verifyAuthToken = async (token: { auth: string, twoFactor: string; 
 
     if (!resp.ok) {
         const data = await resp.json();
-        throw new VRChatError(data);
+        throw new ApiError(data);
     }
 
     return await resp.json();
@@ -270,7 +270,7 @@ export const logout = async (authToken: string) => {
 
     if (!resp.ok) {
         const data = await resp.json();
-        throw new VRChatError(data);
+        throw new ApiError(data);
     }
 };
 
@@ -294,12 +294,12 @@ interface FileVersion {
     version: number;
 }
 
-export type VRChatMimeType = 'image/jpeg' | 'image/jpg' | 'image/png' | 'image/webp' | 'image/gif' | 'image/bmp' | 'image/svg+xml' | 'image/tiff' | 'application/x-avatar' | 'application/x-world' | 'application/gzip' | 'application/x-rsync-signature' | 'application/x-rsync-delta' | 'application/octet-stream';
+export type ApiMimeType = 'image/jpeg' | 'image/jpg' | 'image/png' | 'image/webp' | 'image/gif' | 'image/bmp' | 'image/svg+xml' | 'image/tiff' | 'application/x-avatar' | 'application/x-world' | 'application/gzip' | 'application/x-rsync-signature' | 'application/x-rsync-delta' | 'application/octet-stream';
 
 interface File {
     extension: string;
     id: string;
-    mimeType: VRChatMimeType;
+    mimeType: ApiMimeType;
     name: string;
     ownerId: string;
     tags: string[];
@@ -324,7 +324,7 @@ export const createFile = async (authToken: string, fileData: {
 
     if (!resp.ok) {
         const data = await resp.json();
-        throw new VRChatError(data);
+        throw new ApiError(data);
     }
 
     return await resp.json();
@@ -355,7 +355,7 @@ export const createFileVersion = async (
             return await response.json();
         } else {
             const data = await response.json();
-            throw new VRChatError(data);
+            throw new ApiError(data);
         }
     } catch (error) {
         throw error;
@@ -373,7 +373,7 @@ export const deleteFileVersion = async (authToken: string, fileId: string, versi
 
     const data = await response.json();
     if (response.ok) return data as File;
-    else throw new VRChatError(data);
+    else throw new ApiError(data);
 }
 
 export interface Avatar {
@@ -420,7 +420,7 @@ export const getAvatar = async (authToken: string, avatarId: string): Promise<Av
 
     if (!resp.ok) {
         const data = await resp.json();
-        throw new VRChatError(data);
+        throw new ApiError(data);
     }
     return await resp.json();
 };
@@ -449,7 +449,7 @@ export const createAvatar = async (authToken: string, avatarData: {
 
     if (!resp.ok) {
         const data = await resp.json();
-        throw new VRChatError(data);
+        throw new ApiError(data);
     }
 
     return await resp.json();
@@ -483,7 +483,7 @@ export const updateAvatar = async (
 
     if (!resp.ok) {
         const data = await resp.json();
-        throw new VRChatError(data);
+        throw new ApiError(data);
     }
 
     return await resp.json();
@@ -511,7 +511,7 @@ export const startFileUpload = async (
 
     if (!resp.ok) {
         const data = await resp.json();
-        throw new VRChatError(data);
+        throw new ApiError(data);
     }
 
     return await resp.json();
@@ -536,7 +536,7 @@ export const finishFileUpload = async (
 
     if (!resp.ok) {
         const data = await resp.json();
-        throw new VRChatError(data);
+        throw new ApiError(data);
     }
 
     return await resp.json();
@@ -553,13 +553,13 @@ export const showFile = async (authToken: string, fileId: string): Promise<File>
 
     if (!resp.ok) {
         const data = await resp.json();
-        throw new VRChatError(data);
+        throw new ApiError(data);
     }
 
     return await resp.json();
 };
 
-export const fetchVRChat = async (authToken: string, url: string): Promise<unknown> => {
+export const fetchApi = async (authToken: string, url: string): Promise<unknown> => {
     const resp = await fetchT(url, {
         method: 'GET',
         headers: {
@@ -570,7 +570,7 @@ export const fetchVRChat = async (authToken: string, url: string): Promise<unkno
 
     if (!resp.ok) {
         const data = await resp.json();
-        throw new VRChatError(data);
+        throw new ApiError(data);
     }
 
     return await resp.json();

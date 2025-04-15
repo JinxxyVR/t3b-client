@@ -1,4 +1,4 @@
-import { Avatar, createAvatar, createFile, createFileVersion, deleteFileVersion, finishFileUpload, getAvatar, parseFileUrl, showFile, startFileUpload, updateAvatar, USER_AGENT, VRChatError, VRChatMimeType } from "./api";
+import { Avatar, createAvatar, createFile, createFileVersion, deleteFileVersion, finishFileUpload, getAvatar, parseFileUrl, showFile, startFileUpload, updateAvatar, USER_AGENT, ApiError, ApiMimeType } from "./api";
 import { stat } from "@tauri-apps/plugin-fs";
 import { extname } from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api/core";
@@ -34,14 +34,14 @@ export function useUpload(bundle: Bundle, readyBundle: ReadyBundles) {
 
             if (avatar) {
                 const imageFileUrlRes = parseFileUrl(avatar.thumbnailImageUrl);
-                const imageUrl = await uploadFileToVRChat(authToken, imageFileName(bundle.metadata.name), bundle.thumbnailPath, "image/png", (part, totalParts) => { }, imageFileUrlRes.id);
+                const imageUrl = await uploadFileToApi(authToken, imageFileName(bundle.metadata.name), bundle.thumbnailPath, "image/png", (part, totalParts) => { }, imageFileUrlRes.id);
                 await updateAvatar(authToken, avatarId, { name: bundle.metadata.name, imageUrl });
             } else {
-                const imageUrl = await uploadFileToVRChat(authToken, imageFileName(bundle.metadata.name), bundle.thumbnailPath, "image/png", (part, totalParts) => { });
+                const imageUrl = await uploadFileToApi(authToken, imageFileName(bundle.metadata.name), bundle.thumbnailPath, "image/png", (part, totalParts) => { });
                 try {
                     avatar = await createAvatar(authToken, { id: avatarId, name: bundle.metadata.name, imageUrl, releaseStatus: "private", unityVersion: "2022.3.6f1" });
                 } catch (err) {
-                    if (err instanceof VRChatError &&
+                    if (err instanceof ApiError &&
                         err.data.error.status_code === 500
                     ) {
                         throw new Error("Blueprint ID already in use: Avatar bundle has already been uploaded");
@@ -61,7 +61,7 @@ export function useUpload(bundle: Bundle, readyBundle: ReadyBundles) {
                 let fileId = undefined;
                 if (existingFile) fileId = parseFileUrl(existingFile.assetUrl).id;
 
-                const bundleUrl = await uploadFileToVRChat(authToken, avatarFileName(bundle.metadata.name), path, "application/x-avatar", (part, totalParts) => {
+                const bundleUrl = await uploadFileToApi(authToken, avatarFileName(bundle.metadata.name), path, "application/x-avatar", (part, totalParts) => {
                     setProgress({ type: "bundle", part, totalParts, platformIndex, totalPlatforms });
                 }, fileId);
                 await updateAvatar(authToken, avatar.id, { assetUrl: bundleUrl, platform: unityPlatform, unityVersion, assetVersion: 1 });
@@ -79,7 +79,7 @@ export function useUpload(bundle: Bundle, readyBundle: ReadyBundles) {
 }
 
 // returns asssetUrl
-async function uploadFileToVRChat(authToken: string, name: string, path: string, mimeType: VRChatMimeType, onProgress: (part: number, totalParts: number) => void, fileId?: string) {
+async function uploadFileToApi(authToken: string, name: string, path: string, mimeType: ApiMimeType, onProgress: (part: number, totalParts: number) => void, fileId?: string) {
     const extension = "." + await extname(path);
 
     let file;

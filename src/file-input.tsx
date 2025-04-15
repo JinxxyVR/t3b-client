@@ -51,7 +51,7 @@ export function FileInput(props: { extension: string, onChange: (path: string) =
         const selected = await open({
             defaultPath: await downloadDir(), filters:
                 [{
-                    name: "Third Avatar Bundle",
+                    name: "Avatar Bundle",
                     extensions: [props.extension]
                 }]
         });

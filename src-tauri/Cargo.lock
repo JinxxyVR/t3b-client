@@ -4339,6 +4339,7 @@ dependencies = [
  "librsync",
  "lz4_flex",
  "md-5",
+ "num_enum",
  "rand 0.8.5",
  "read-progress-stream",
  "reqwest",

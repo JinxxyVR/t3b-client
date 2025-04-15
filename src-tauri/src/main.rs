@@ -26,6 +26,8 @@ use zip::ZipArchive;
 mod bundle;
 mod upload;
 
+const ENTRY_NAME: &str = "jinxxy_api_2fa_token";
+
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct Token {
@@ -35,14 +37,14 @@ struct Token {
 
 #[tauri::command]
 fn save_token(username: String, token: Token) -> Result<(), String> {
-    let entry = Entry::new("jinxxy_vrchat_token", &username).map_err(|e| e.to_string())?;
+    let entry = Entry::new(ENTRY_NAME, &username).map_err(|e| e.to_string())?;
     let json = serde_json::to_string(&token).map_err(|e| e.to_string())?;
     entry.set_password(&json).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 fn load_token(username: String) -> Result<Option<Token>, String> {
-    let entry = Entry::new("jinxxy_vrchat_token", &username).map_err(|e| e.to_string())?;
+    let entry = Entry::new(ENTRY_NAME, &username).map_err(|e| e.to_string())?;
     let res = entry.get_password();
     match res {
         Ok(json) => serde_json::from_str::<Token>(&json)
@@ -55,7 +57,7 @@ fn load_token(username: String) -> Result<Option<Token>, String> {
 
 #[tauri::command]
 fn delete_token(username: String) -> Result<(), String> {
-    let entry = Entry::new("jinxxy_vrchat_token", &username).map_err(|e| e.to_string())?;
+    let entry = Entry::new(ENTRY_NAME, &username).map_err(|e| e.to_string())?;
     entry.delete_credential().map_err(|e| e.to_string())
 }
 
@@ -120,7 +122,8 @@ async fn transcode_bundle(path: String, output: String) -> Result<(), String> {
     let decoder = AssetBundleDecoder::new(reader);
     let mut bundle = decoder.decode().map_err(|err| err.to_string())?;
 
-    bundle.set_blocks_lzma();
+    bundle.set_compression_type(bundle::CompressionType::LZMA);
+    
 
     let output_file = File::create(&output).map_err(|err| err.to_string())?;
     let writer = std::io::BufWriter::new(output_file);

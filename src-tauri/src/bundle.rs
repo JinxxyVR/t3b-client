@@ -64,11 +64,32 @@ pub struct AssetBundle {
     block: Vec<u8>,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq, num_enum::TryFromPrimitive)]
+#[repr(u16)]
+pub enum CompressionType {
+    Uncompressed = 0,
+    LZMA = 1,
+    LZ4 = 2,
+    LZ4HC = 3,
+    ZSTD = 4,
+    Unknown,
+}
+
+impl CompressionType {
+    fn from_flags(flags: u16) -> Self {
+        CompressionType::try_from(flags & 0x3F).unwrap_or(CompressionType::Unknown)
+    }
+}
+
 impl AssetBundle {
     pub fn set_blocks_lzma(&mut self) {
         for block in &mut self.blocks_info {
             block.flags = (block.flags & !0x3F) | 1;
         }
+    }
+
+    pub fn set_compression_type(&mut self, compression: CompressionType) {
+        self.flags = (self.flags & !0x3F) | ((compression as u16) as u32);
     }
 }
 
@@ -185,10 +206,10 @@ impl<R: Read + Seek> AssetBundleDecoder<R> {
         uncompressed_size: u32,
         flags: u32,
     ) -> Result<Vec<u8>> {
-        let compression_type = flags & 0x3F;
+        let compression_type = CompressionType::from_flags(flags as u16);
 
         match compression_type {
-            1 => {
+            CompressionType::LZMA => {
                 // LZMA
                 let mut header = [0u8; 5];
                 self.inner.read_exact(&mut header)?;
@@ -200,7 +221,7 @@ impl<R: Read + Seek> AssetBundleDecoder<R> {
 
                 Ok(decompressed)
             }
-            2 | 3 => {
+            CompressionType::LZ4 | CompressionType::LZ4HC => {
                 // LZ4, LZ4HC
                 let mut data = Vec::with_capacity(compressed_size as usize);
                 unsafe {
@@ -209,7 +230,7 @@ impl<R: Read + Seek> AssetBundleDecoder<R> {
                 self.inner.read_exact(&mut data)?;
                 Ok(lz4_flex::decompress(&data, uncompressed_size as usize)?)
             }
-            4 => Ok(zstd::decode_all(&mut self.inner)?),
+            CompressionType::ZSTD => Ok(zstd::decode_all(&mut self.inner)?),
             _ => {
                 let mut data = Vec::with_capacity(compressed_size as usize);
                 unsafe {
@@ -232,7 +253,7 @@ impl<W: Write + Seek> AssetBundleEncoder<W> {
     }
 
     pub fn encode(mut self, bundle: &AssetBundle) -> Result<()> {
-        if (bundle.blocks_info.len() != 1) {
+        if bundle.blocks_info.len() != 1 {
             return Err(BundleError::MoreThanOneBlock);
         }
 
@@ -247,7 +268,7 @@ impl<W: Write + Seek> AssetBundleEncoder<W> {
         self.inner.write_u64(0)?;
 
         let compressed_block =
-            self.compress(&bundle.block, (bundle.blocks_info[0].flags & 0x3F).into())?;
+            self.compress(&bundle.block, bundle.flags)?;
 
         // Create and compress block info
         let block_info = {
@@ -279,7 +300,7 @@ impl<W: Write + Seek> AssetBundleEncoder<W> {
 
         self.inner.write_u32(compressed_block_info.len() as u32)?;
         self.inner.write_u32(block_info.len() as u32)?;
-        self.inner.write_u32(bundle.flags)?;
+        self.inner.write_u32(bundle.flags as u32)?;
 
         // Alignment
         if bundle.version >= 7 {
@@ -306,9 +327,11 @@ impl<W: Write + Seek> AssetBundleEncoder<W> {
         Ok(())
     }
 
-    fn compress(&mut self, data: &[u8], compression_type: u32) -> Result<Vec<u8>> {
+    fn compress(&mut self, data: &[u8], flags: u32) -> Result<Vec<u8>> {
+        let compression_type = CompressionType::from_flags(flags as u16);
+        // println!("compressing {} bytes to {:?}", data.len(), compression_type);
         match compression_type {
-            1 => {
+            CompressionType::LZMA => {
                 let mut options = stream::LzmaOptions::new_preset(6)?;
                 options.dict_size(524288); // Unity dict size
                                            // .literal_context_bits(3)
@@ -328,7 +351,7 @@ impl<W: Write + Seek> AssetBundleEncoder<W> {
 
                 Ok(compressed_unity_format)
             }
-            2 | 3 => {
+            CompressionType::LZ4 | CompressionType::LZ4HC => {
                 // LZ4, LZ4HC
                 Ok(lz4_flex::compress(data))
             }

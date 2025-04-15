@@ -2,16 +2,11 @@ import { useEffect, useState } from 'react';
 import { ThemeProvider } from './components/theme-provider';
 import thirdLogo from "./assets/third-logo.svg";
 import { Button } from './components/ui/button';
-import vrchatLogo from "./assets/VRC_Logo.svg";
 import { FileInput } from "./file-input";
 import Android from "./assets/android.svg?react";
 import Windows from "./assets/windows.svg?react";
 import Apple from "./assets/apple.svg?react";
-import excellent from './assets/excellent.png';
-import good from './assets/good.png';
-import medium from './assets/medium.png';
-import poor from './assets/poor.png';
-import veryPoor from './assets/very-poor.png';
+
 import { ChevronsUpDown, CrossIcon, LogOut, MinusIcon, Upload, XIcon } from 'lucide-react';
 import { AuthProvider, useAuth } from './auth';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './components/ui/dropdown-menu';
@@ -30,16 +25,6 @@ const appWindow = getCurrentWebviewWindow();
 
 
 function AssetBundleInfo(props: { platform: string, performance: string; }) {
-    let perfImg: string;
-    switch (props.performance) {
-        case 'excellent': perfImg = excellent; break;
-        case 'good': perfImg = good; break;
-        case 'medium': perfImg = medium; break;
-        case 'poor': perfImg = poor; break;
-        case 'verypoor': perfImg = veryPoor; break;
-        default: throw new Error('Unknown performance rating');
-    }
-
     let perfTxt: string;
     switch (props.performance) {
         case 'excellent': perfTxt = "Excellent"; break;
@@ -77,11 +62,8 @@ function AssetBundleInfo(props: { platform: string, performance: string; }) {
         </Tooltip>
         <Tooltip>
             <TooltipTrigger>
-                <img src={perfImg} className="size-10" />
+                <a className="px-3">{perfTxt}</a>
             </TooltipTrigger>
-            <TooltipContent>
-                <p>{perfTxt}</p>
-            </TooltipContent>
         </Tooltip>
     </div>;
 }
@@ -227,7 +209,7 @@ function User() {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className='min-w-48 bg-gradient-to-br from-zinc-800'>
-                    <DropdownMenuLabel>VRChat Account</DropdownMenuLabel>
+                    <DropdownMenuLabel>API Account</DropdownMenuLabel>
                     <DropdownMenuSeparator className='bg-zinc-700' />
                     <DropdownMenuItem onClick={logout}><LogOut className='h-4 mr-1' /><span className=''>Log out</span></DropdownMenuItem>
                 </DropdownMenuContent>
@@ -237,7 +219,7 @@ function User() {
 
     return <>
         <Button variant='outline' onClick={() => openLogin()} className='flex items-start rounded-none'>
-            <span className='mt-0.5'>Login to</span><img src={vrchatLogo} className="w-16 ml-2" />
+            <span className='mt-0.5'>API Login</span>
         </Button>
     </>;
 }
@@ -357,8 +339,7 @@ function App() {
                             <Avatar bundle={bundle} readyBundle={readyBundle} onFinish={handleFinish} />
                             : <div className='mx-16'>
                                 <h1 className='my-8 text-2xl font-semibold flex'>
-                                    <span className='mt-1'>Upload an Avatar to </span>
-                                    <img src={vrchatLogo} className="w-32 ml-2 inline" />
+                                    <span className='mt-1'>Upload Avatars Directly</span>
                                 </h1>
                                 <FileInput extension='3b' onChange={handleFile} loading={loading} />
                             </div>

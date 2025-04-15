@@ -7,7 +7,6 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Label } from "./components/ui/label";
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
-import vrchatLogo from "./assets/VRC_Logo.svg";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "./components/ui/input-otp";
 import { Alert, AlertDescription } from "./components/ui/alert";
 import { LoaderCircle } from "lucide-react";
@@ -243,7 +242,7 @@ export function AuthProvider(props: { children: ReactNode; }) {
         <DialogContent className='max-w-sm bg-transparent bg-gradient-to-br from-zinc-700/50 to-black/50 backdrop-blur-lg'>
           <DialogHeader>
             <DialogTitle className='flex items-start'>
-              <span className='text-lg font-semibold'>Login to</span><img src={vrchatLogo} className="w-24 ml-2" alt="VRChat" />
+              <span className='text-lg font-semibold'>Login</span>
             </DialogTitle>
           </DialogHeader>
           {error && (
@@ -314,10 +313,7 @@ export function AuthProvider(props: { children: ReactNode; }) {
           )}
           <DialogFooter className='text-sm text-zinc-400'>
             <div>
-              <p>Jinxxy Direct Client communicates directly with the VRChat servers.</p>
               <p>Jinxxy Direct Client is open source and can be found here: <ExternalLink href={"https://github.com/JinxxyVR/t3b-client"}>github.com/JinxxyVR/t3b-client</ExternalLink></p>
-              <br />
-              <p className='text-xs'>Jinxxy Direct is not affiliated with, endorsed, sponsored, or specifically approved by VRChat Inc.</p>
             </div>
           </DialogFooter>
         </DialogContent>
