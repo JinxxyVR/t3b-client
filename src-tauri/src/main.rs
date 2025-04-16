@@ -141,40 +141,76 @@ async fn upload_file(
     start: u64,
     length: u64,
 ) -> Result<Option<String>, String> {
-    let mut file = tokio::fs::File::open(&path)
+    const MAX_RETRIES: u32 = 3;
+    const RETRY_DELAY_MS: u64 = 3000;
+
+    let mut retry_count = 0;
+    
+    while retry_count < MAX_RETRIES {
+        match try_upload(&url, &path, start, length).await {
+            Ok(etag) => return Ok(etag),
+            Err(err) => {
+                retry_count += 1;
+                if retry_count >= MAX_RETRIES {
+                    return Err(format!("Failed after {} attempts: {}", MAX_RETRIES, err));
+                }
+                #[cfg(debug_assertions)]
+                println!("Upload attempt {} failed: {}. Retrying in {}ms...", 
+                          retry_count, err, RETRY_DELAY_MS);
+                tokio::time::sleep(tokio::time::Duration::from_millis(RETRY_DELAY_MS)).await;
+            }
+        }
+    }
+    
+    // This should never be reached due to the return in the error case above
+    Err("Unexpected error in retry logic".to_string())
+}
+
+// Helper function that performs a single upload attempt
+async fn try_upload(
+    url: &str,
+    path: &str,
+    start: u64,
+    length: u64,
+) -> Result<Option<String>, String> {
+    // Open and seek the file
+    let mut file = tokio::fs::File::open(path)
         .await
-        .map_err(|err| err.to_string())?;
+        .map_err(|err| format!("Failed to open file: {}", err))?;
+    
     file.seek(SeekFrom::Start(start))
         .await
-        .map_err(|err| err.to_string())?;
+        .map_err(|err| format!("Failed to seek file: {}", err))?;
+    
     let stream = ReaderStream::new(file.take(length));
-
+    
+    // Prepare and send the request
     let client = reqwest::Client::new();
     let request = client
         .put(url)
         .header(reqwest::header::USER_AGENT, USER_AGENT)
         .header(CONTENT_LENGTH, length.to_string())
         .body(Body::wrap_stream(stream));
-
-    let response = request.send().await.map_err(|err| err.to_string())?;
+    
+    let response = request.send().await
+        .map_err(|err| format!("Network error: {}", err))?;
+    
+    // Handle response
     if response.status().is_success() {
-        let h = response.headers().get("etag");
-        let etag = if let Some(etag) = h {
-            Some(
-                etag.to_str()
-                    .map(|v| v.to_owned())
-                    .map_err(|err| err.to_string())?,
-            )
-        } else {
-            None
-        };
-        Ok(etag)
+        // Extract ETag if present
+        if let Some(etag) = response.headers().get("etag") {
+            return etag.to_str()
+                .map(|v| Some(v.to_owned()))
+                .map_err(|err| format!("{err}"));
+        }
+        Ok(None)
     } else {
-        Err(format!(
-            "{}: {}",
-            response.status().as_str(),
-            response.text().await.unwrap_or_default()
-        ))
+        // Handle error response
+        let status = response.status();
+        let body = response.text().await
+            .unwrap_or(format!("Could not read error response"));
+            
+        Err(format!("HTTP error {}({}): {}", status.as_u16(), status.as_str(), body))
     }
 }
 
